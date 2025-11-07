@@ -1,0 +1,120 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Resume Review</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f8f9fa; font-family: Inter, Arial, sans-serif; padding:30px; }
+    .card { margin-bottom: 20px; border-radius:12px; }
+    .edit-btn { float: right; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h3 class="mb-4">📝 Review Your Resume</h3>
+
+  <!-- Personal Info -->
+  <div class="card p-3">
+    <h5>Personal Information 
+      <a href="{% url 'resume_builder' %}?step=1" class="btn btn-sm btn-outline-primary edit-btn">Edit</a>
+    </h5>
+    <hr>
+    <ul id="review-personal" class="list-unstyled mb-0"></ul>
+  </div>
+
+  <!-- Education -->
+  <div class="card p-3">
+    <h5>Education 
+      <a href="{% url 'resume_builder' %}?step=2" class="btn btn-sm btn-outline-primary edit-btn">Edit</a>
+    </h5>
+    <hr>
+    <table class="table table-bordered" id="review-edu"></table>
+  </div>
+
+  <!-- Skills -->
+  <div class="card p-3">
+    <h5>Skills 
+      <a href="{% url 'resume_builder' %}?step=3" class="btn btn-sm btn-outline-primary edit-btn">Edit</a>
+    </h5>
+    <hr>
+    <table class="table table-bordered" id="review-skill"></table>
+  </div>
+
+  <!-- Projects -->
+  <div class="card p-3">
+    <h5>Projects 
+      <a href="{% url 'resume_builder' %}?step=4" class="btn btn-sm btn-outline-primary edit-btn">Edit</a>
+    </h5>
+    <hr>
+    <table class="table table-bordered" id="review-proj"></table>
+  </div>
+
+  <!-- Experience -->
+  <div class="card p-3">
+    <h5>Work Experience 
+      <a href="{% url 'resume_builder' %}?step=5" class="btn btn-sm btn-outline-primary edit-btn">Edit</a>
+    </h5>
+    <hr>
+    <table class="table table-bordered" id="review-exp"></table>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="{% url 'resume_builder' %}" class="btn btn-secondary">⬅ Back to Builder</a>
+    <a href="{% url 'template_selection' %}" class="btn btn-success ms-2">Submit ➜</a>
+  </div>
+</div>
+
+<script>
+// Load and display Personal Info
+const personalFields = [
+  ["Full Name", localStorage.getItem("id_full_name")],
+  ["Email", localStorage.getItem("id_email")],
+  ["Phone", localStorage.getItem("id_phone")],
+  ["Address", localStorage.getItem("id_address")],
+  ["Objective", localStorage.getItem("id_objective")],
+  ["LinkedIn", localStorage.getItem("id_linkedin")],
+  ["GitHub", localStorage.getItem("id_github")]
+];
+const personalUl = document.getElementById("review-personal");
+personalFields.forEach(([label, value]) => {
+  if (value) personalUl.insertAdjacentHTML("beforeend", `<li><b>${label}:</b> ${value}</li>`);
+});
+
+// Load and display Education
+const eduList = JSON.parse(localStorage.getItem("eduList")) || [];
+const eduTable = document.getElementById("review-edu");
+if (eduList.length === 0) {
+  eduTable.innerHTML = "<tr><td class='text-muted'>No education added yet.</td></tr>";
+} else {
+  eduTable.innerHTML = `
+    <thead><tr><th>Level</th><th>Board/Degree</th><th>Institute</th><th>Year</th><th>Percentage</th></tr></thead>
+    <tbody>${eduList.map(e=>`
+      <tr><td>${e.level}</td><td>${e.boardOrDegree}</td><td>${e.institute}</td><td>${e.year}</td><td>${e.percentage}</td></tr>
+    `).join('')}</tbody>`;
+}
+
+// Load Skills, Projects, Experience
+const sections = [
+  ["skill", "review-skill", ["Skill", "Level"]],
+  ["proj", "review-proj", ["Title", "Tech", "Description"]],
+  ["exp", "review-exp", ["Company", "Role", "Duration", "Description"]]
+];
+
+sections.forEach(([key, tableId, headers]) => {
+  const list = JSON.parse(localStorage.getItem(`${key}List`)) || [];
+  const table = document.getElementById(tableId);
+  if (list.length === 0) {
+    table.innerHTML = `<tr><td class='text-muted'>No ${key}s added yet.</td></tr>`;
+  } else {
+    table.innerHTML = `
+      <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+      <tbody>${list.map(e=>`
+        <tr>${Object.values(e).map(v=>`<td>${v}</td>`).join('')}</tr>
+      `).join('')}</tbody>`;
+  }
+});
+</script>
+</body>
+</html>

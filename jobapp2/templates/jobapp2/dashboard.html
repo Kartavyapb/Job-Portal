@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+    /* ===== Background Layer Enhancements ===== */
+body { 
+    background: linear-gradient(-45deg, #dfe9f3, #fdfbfb, #e3f2fd, #fce4ec); 
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+    color: #212529; /* default dark text */
+}
+
+/* Extra overlay glow for depth */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 20% 20%, rgba(0,123,255,0.1), transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,0,150,0.1), transparent 50%);
+    z-index: -2;
+}
+
+/* Floating particle/bubble animation */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0, 123, 255, 0.2);
+    animation: rise 18s infinite ease-in;
+    opacity: 0.7;
+}
+.particle:nth-child(4) { width: 25px; height: 25px; bottom: -30px; left: 15%; animation-duration: 12s; }
+.particle:nth-child(5) { width: 15px; height: 15px; bottom: -20px; left: 40%; animation-duration: 14s; }
+.particle:nth-child(6) { width: 20px; height: 20px; bottom: -25px; left: 70%; animation-duration: 16s; }
+
+@keyframes rise {
+    0%   { transform: translateY(0) scale(0.9); opacity: 0.5; }
+    50%  { transform: translateY(-50vh) scale(1.1); opacity: 0.8; }
+    100% { transform: translateY(-100vh) scale(1.3); opacity: 0; }
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating decorative circles */
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    animation: float 8s ease-in-out infinite;
+    z-index: 0;
+}
+.circle:nth-child(1) { width: 120px; height: 120px; top: 10%; left: 5%; animation-duration: 10s; }
+.circle:nth-child(2) { width: 80px; height: 80px; top: 70%; left: 15%; animation-duration: 12s; }
+.circle:nth-child(3) { width: 150px; height: 150px; top: 40%; right: 10%; animation-duration: 14s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+}
+
+/* Card subtle glow */
+.card {
+    border-radius: 18px; 
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.4); 
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+    transition: all 0.4s ease;
+    color: #212529;
+}
+.card:hover { 
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.18); 
+}
+
+/* ===== Gradient Headings ===== */
+h2, h4 {
+    font-weight: 700;
+    font-size: inherit;
+    background: linear-gradient(90deg, #007bff, #00c6ff, #6a11cb);
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+/* ===== Profile picture with neon hover ===== */
+img.profile-pic { 
+    width:120px; height:120px; border-radius:50%; object-fit:cover; 
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 0 12px rgba(0,0,0,0.15);
+}
+img.profile-pic:hover { 
+    transform: scale(1.08) rotate(3deg); 
+    box-shadow: 0 0 25px rgba(0, 153, 255, 0.7); 
+}
+
+/* ===== Links inside list ===== */
+.list-link { 
+    text-decoration: none; 
+    color: #0d6efd; 
+    font-size: 1rem; 
+    transition: color 0.3s ease;
+}
+.list-link:hover { 
+    text-decoration: underline; 
+    color: #6610f2; 
+}
+
+/* ===== Scrollable areas ===== */
+.scrollable {
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+.scrollable::-webkit-scrollbar { width: 6px; }
+.scrollable::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+
+/* ===== Navbar Hover Glow ===== */
+.nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+.nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    left: 0;
+    bottom: 0;
+    background-color: #0d6efd;
+    transition: width 0.3s ease;
+}
+.nav-link:hover::after { width: 100%; }
+
+/* ===== Ads Section with Neon Glow ===== */
+.ad-img {
+    height: 300px;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 14px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+    position: relative;
+    z-index: 1;
+}
+.ad-img:hover {
+    transform: scale(1.07);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    border: 2px solid #00c6ff;
+}
+
+/* ===== Buttons Glow Effect ===== */
+.btn {
+    transition: all 0.3s ease;
+    border-radius: 30px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+.btn::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 20%, transparent 70%);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+    z-index: -1;
+}
+.btn:hover::after {
+    transform: scale(1);
+}
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+/* ===== Fade/Slide keyframes ===== */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Navbar glassy look */
+.navbar {
+    background: rgba(255,255,255,0.7) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* Section dividers with gradient */
+.container.my-5 {
+    padding: 3rem;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(0,123,255,0.05), rgba(255,0,150,0.05));
+}
+
+/* ===== Dark Mode Styles ===== */
+body.dark-mode {
+    background: linear-gradient(-45deg, #121212, #1e1e1e, #2a2a2a, #0d0d0d);
+    color: #f1f1f1;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode b,
+body.dark-mode strong,
+body.dark-mode small,
+body.dark-mode label {
+    color: #f1f1f1 !important; /* force text white in dark mode */
+}
+
+body.dark-mode .card {
+    background: rgba(30,30,30,0.85);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    color: #f1f1f1;
+}
+
+body.dark-mode .navbar {
+    background: rgba(30,30,30,0.85) !important;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+}
+
+body.dark-mode h2, 
+body.dark-mode h4 {
+    background: linear-gradient(90deg, #00c6ff, #6a11cb, #ff6a00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+}
+
+body.dark-mode .btn {
+    border-color: #00c6ff;
+    color: #00c6ff;
+}
+body.dark-mode .btn:hover {
+    background: #00c6ff;
+    color: #fff;
+}
+
+body.dark-mode .list-group-item {
+    background-color: rgba(40,40,40,0.85);
+    color: #ddd;
+    border-color: rgba(255,255,255,0.05);
+}
+
+body.dark-mode .nav-link {
+    color: #ddd !important;
+}
+body.dark-mode .nav-link:hover::after {
+    background-color: #00c6ff;
+}
+
+/* ===== Dark Mode Background Objects ===== */
+body.dark-mode .circle {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 12px rgba(0, 198, 255, 0.15);
+}
+body.dark-mode .particle {
+    background: rgba(0, 198, 255, 0.25);
+    box-shadow: 0 0 8px rgba(0, 198, 255, 0.4);
+}
+    </style>
+</head>
+<body class="container py-4">
+
+    <!-- Floating circles for uniqueness -->
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light mb-4" style="background: transparent !important; z-index: 10;">
+        <div class="container-fluid px-0">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}" style="color: #09c8eef9;">Dream Jobs</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/jobs/">Jobs</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="contactDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">Contact Us</a>
+                        <ul class="dropdown-menu" aria-labelledby="contactDropdown">
+                            <li><a class="dropdown-item">Mobile Number (1800-274937)</a></li>
+                            <li><a class="dropdown-item">Email (dreamjob2025@gmail.com)</a></li>
+                            <li><a class="dropdown-item" href="#">Instagram (dream_job_2025)</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/help/">Help</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+                </ul>
+
+                <div class="d-flex ms-auto">
+                    <a class="btn btn-success" href="{% url 'home' %}">Home</a>
+                </div>
+
+                <button id="darkModeToggle" class="btn btn-outline-dark ms-2">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-link" style="border: none; background-color: transparent; color: red;"> ⏻ Log Out </button>
+                </form>
+
+            </div>
+        </div>
+    </nav>
+
+    <h2 class="mb-4 text-center" style="font-size:xx-large;">Welcome {{ display_name }}</h2>
+
+    <div class="row g-4">
+        <!-- Left profile column -->
+        <div class="col-lg-4 col-md-5">
+            <div class="card p-3 text-center h-100">
+                {% if profile.profile_pic %}
+                    <img src="{{ profile.profile_pic.url }}" class="profile-pic mb-2" alt="Profile">
+                {% else %}
+                    <img src="{% static 'images/default-avatar.png' %}" class="profile-pic mb-2" alt="Default avatar">
+                {% endif %}
+
+                <h4 class="mb-1">{{ display_name }}</h4>
+                <p class="mb-1"><b>📧 Email:</b> {{ request.user.email }}</p>
+                <p class="mb-1"><b>📞 Phone:</b> {{ profile.phone }}</p>
+                <p class="mb-1"><b>🏠︎ Address:</b> {{ profile.address }}</p>
+                <p class="mb-1"><b>🎯 Skills:</b> {{ profile.skills }}</p>
+                <p class="mb-1"><b>💼 Experience:</b> {{ profile.experience }}</p>
+
+                {% if profile.github %}
+                    <p class="mb-2">
+                        <b>GitHub:</b>
+                        <a href="{{ profile.github }}" target="_blank" class="ms-1">
+                            <i class="bi bi-github me-1"></i> 
+                            {{ profile.github|cut:"https://github.com/" }}
+                        </a>
+                    </p>
+                {% endif %}
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-sm">✏️ Edit Profile</a>
+                    <a href="{% url 'resume_builder' %}" class="btn btn-outline-success btn-sm">📝 Create Resume</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right side: Posted + Applied Jobs side by side -->
+        <div class="col-lg-8 col-md-7">
+            <div class="row g-4 h-100">
+                <!-- Posted Jobs card -->
+                <div class="col-lg-6 col-md-12 d-flex">
+                    <div class="card p-3 flex-fill d-flex flex-column">
+                        <div class="d-flex align-items-center mb-2">
+                            <h4 class="mb-0 me-auto">
+                                Your Posted Jobs ({{ posted_jobs.count }})
+                            </h4>
+                            <a href="{% url 'welcome' %}" class="btn btn-primary btn-sm">+ Post Job</a>
+                        </div>
+                        <div class="scrollable flex-grow-1">
+                            <ul class="list-group list-group-flush">
+                                {% for job in posted_jobs %}
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <span class="fw-bold me-2">{{ forloop.counter }}.</span>
+                                        <a class="list-link fw-semibold" href="{% url 'job_detail' job.id %}">
+                                            {{ job.job_title }}
+                                        </a>
+                                        <div class="text-muted small ms-2">({{ job.company_name }})</div>
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item no-items">No Jobs Posted Yet.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applied Jobs card -->
+<div class="col-lg-6 col-md-12 d-flex">
+    <div class="card p-3 flex-fill d-flex flex-column">
+        <h4 class="mb-2">Your Applied Jobs ({{ applied_jobs.count }})</h4>
+        <div class="scrollable flex-grow-1">
+            <ul class="list-group list-group-flush">
+                {% for application in applied_jobs %}
+                    <li class="list-group-item d-flex flex-column">
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold me-2">{{ forloop.counter }}.</span>
+                            <a class="list-link fw-semibold" href="{% url 'job_detail' application.job.id %}">
+                                {{ application.job.job_title }}
+                            </a>
+                            <div class="text-muted small ms-2">
+                                ({{ application.job.company_name }})
+                            </div>
+                        </div>
+                        <small class="text-muted mt-1">
+                            Applied on {{ application.applied_on|date:"M d, Y" }}
+                        </small>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item no-items">No Jobs Applied Yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Advertising Section -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card p-4 text-center">
+                    <h4 class="mb-3">Sponsored Ads</h4>
+
+                    <!-- Google AdSense -->
+                    <div class="mb-3">
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+                             data-ad-slot="1234567890"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                        <script>
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+
+                    <!-- Banner Ads -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="https://example.com/ad1" target="_blank">
+                                <img src="{% static 'images/ad1.jpeg' %}" class="img-fluid ad-img" alt="Ad 1">
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="https://example.com/ad2" target="_blank">
+                                <img src="{% static 'images/ad2.jpg' %}" class="img-fluid ad-img" alt="Ad 2">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const body = document.body;
+
+    // Check saved preference
+    if (localStorage.getItem("darkMode") === "enabled") {
+        body.classList.add("dark-mode");
+        toggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+        toggleBtn.classList.replace("btn-outline-dark", "btn-outline-light");
+    }
+
+    toggleBtn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        
+        if (body.classList.contains("dark-mode")) {
+            localStorage.setItem("darkMode", "enabled");
+            toggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            toggleBtn.classList.replace("btn-outline-dark", "btn-outline-light");
+        } else {
+            localStorage.setItem("darkMode", "disabled");
+            toggleBtn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+            toggleBtn.classList.replace("btn-outline-light", "btn-outline-dark");
+        }
+    });
+    </script>
+</body>
+</html>

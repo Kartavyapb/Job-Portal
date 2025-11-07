@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+
+    <title>Welcome | Job Portal</title>
+
+    <style>
+      /* Full-page background with gradient + image overlay */
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                    url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80") 
+                    no-repeat center center/cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Central box */
+      .welcome-box {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
+        max-width: 700px;
+        position: relative;
+      }
+
+      .welcome-box h1 {
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+
+      .highlight {
+        color: #28a745; /* green */
+      }
+
+      .sub-highlight {
+        color: #ff9800; /* golden */
+      }
+
+      .btn-job {
+        border-radius: 30px;
+        font-size: 18px;
+        padding: 10px 25px;
+        margin: 10px;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .btn-job:hover {
+        transform: scale(1.08);
+      }
+
+      /* Home button styling */
+      .home-btn {
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        border-radius: 25px;
+        font-size: 16px;
+        padding: 8px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        transition: all 0.3s ease-in-out;
+        text-decoration: none;
+      }
+
+      .home-btn:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="welcome-box">
+      <!-- Home Button -->
+      <a style="position: absolute; left: 80%; max-width: 150px;" href="{% url 'home' %}" class="home-btn">🏠 Home</a><br>
+
+      <h1 class="highlight">✅ Logged in Successfully</h1>
+      <h1 class="sub-highlight">🌟Welcome to the Job Portal🌟</h1>
+      <hr>
+      <p class="lead">Expand your workforce by exploring the best candidates here</p>
+      
+      <div>
+        <a class="btn btn-success btn-job" href="/create-it-jobs/" role="button">💻 Add Jobs</a>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

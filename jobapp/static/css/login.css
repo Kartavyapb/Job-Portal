@@ -1,0 +1,34 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-image: url("login_page.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    justify-content: center;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
+.container{
+    background: none;
+    margin-left: auto;
+    margin-right: 50px;
+    margin-top: 13%;
+    max-width: 40%;
+    max-height: 50%;
+    border: 5px solid cornflowerblue;
+    justify-content: right;
+}
+
+form label {
+    color: aqua;
+    font-weight: bold;
+}
+
+hr{
+    border: none;
+    height: 2px;
+    background-color: #80bdff;
+}

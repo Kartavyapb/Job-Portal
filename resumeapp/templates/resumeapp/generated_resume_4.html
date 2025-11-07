@@ -1,0 +1,160 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Resume Template 4</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #fff8f3;
+      font-family: 'Poppins', sans-serif;
+      padding: 40px;
+      color: #333;
+    }
+    .header {
+      background: #ff7b00;
+      color: white;
+      text-align: center;
+      padding: 30px;
+      border-radius: 15px;
+    }
+    .section {
+      background: white;
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h5 {
+      color: #ff7b00;
+      border-bottom: 2px solid #ff7b00;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+    }
+    .btn { border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div id="resumeContent">
+    <div class="header">
+      <h2 id="fullName"></h2>
+      <p>
+        <span id="email"></span> | 
+        <span id="phone"></span> | 
+        <span id="address"></span> | 
+        <span id="linkedin"></span> | 
+        <span id="github"></span>
+      </p>
+    </div>
+
+    <div class="section" id="objectiveSection"></div>
+    <div class="section" id="educationSection"></div>
+    <div class="section" id="skillsSection"></div>
+    <div class="section" id="projectsSection"></div>
+    <div class="section" id="experienceSection"></div>
+  </div>
+
+  <div class="text-center mt-4 no-print">
+    <button class="btn btn-warning px-4" onclick="downloadPDF()">⬇ Download PDF</button>
+    <a href="{% url 'template_selection' %}" class="btn btn-secondary ms-2 px-4">Back</a>
+  </div>
+
+  <!-- Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+  // ===== LOAD DATA =====
+  window.onload = () => {
+    const setText = (id, key) => {
+      const v = localStorage.getItem(key);
+      if (v && v.trim() !== "") document.getElementById(id).innerText = v;
+      else document.getElementById(id)?.remove();
+    };
+
+    // Personal info
+    setText("fullName","id_full_name");
+    setText("email","id_email");
+    setText("phone","id_phone");
+    setText("address","id_address");
+    setText("linkedin","id_linkedin");
+    setText("github","id_github");
+
+    // Objective
+    const obj = localStorage.getItem("id_objective");
+    if (obj && obj.trim() !== "") {
+      document.getElementById("objectiveSection").innerHTML = `
+        <h5>Objective</h5>
+        <p>${obj}</p>`;
+    } else document.getElementById("objectiveSection").remove();
+
+    // Dynamic sections
+    const sections = [
+      ["eduList","educationSection","Education", e => `${e.level} - ${e.institute} (${e.year}) ${e.percentage ? '- ' + e.percentage + '%' : ''}`],
+      ["skillList","skillsSection","Skills", s => `${s.skill} ${s.level ? '(' + s.level + ')' : ''}`],
+      ["projList","projectsSection","Projects", p => `<b>${p.title}</b> - ${p.tech}<br>${p.description}`],
+      ["expList","experienceSection","Experience", x => `<b>${x.role}</b> at ${x.company} (${x.duration})<br>${x.description}`]
+    ];
+
+    sections.forEach(([key,id,title,fmt])=>{
+      const list = JSON.parse(localStorage.getItem(key) || "[]");
+      if (list.length > 0) {
+        document.getElementById(id).innerHTML = `
+          <h5>${title}</h5>
+          <ul>${list.map(e => `<li>${fmt(e)}</li>`).join('')}</ul>`;
+      } else document.getElementById(id).remove();
+    });
+  };
+
+  // ===== MULTI-PAGE PDF DOWNLOAD =====
+  async function downloadPDF() {
+    const btn = document.querySelector(".btn-warning");
+    const originalText = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Generating...`;
+
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("p", "pt", "a4");
+      const element = document.getElementById("resumeContent");
+
+      document.querySelectorAll(".no-print").forEach(el => el.style.display = "none");
+
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = doc.internal.pageSize.getHeight();
+
+      let heightLeft = pdfHeight;
+      let position = 0;
+
+      doc.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - pdfHeight;
+        doc.addPage();
+        doc.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pageHeight;
+      }
+
+      doc.save("My_Resume.pdf");
+
+      document.querySelectorAll(".no-print").forEach(el => el.style.display = "block");
+
+      btn.innerHTML = "✅ Downloaded!";
+      setTimeout(() => { btn.disabled = false; btn.innerHTML = originalText; }, 2000);
+
+    } catch (error) {
+      console.error("PDF Generation Error:", error);
+      btn.innerHTML = "❌ Error, Try Again";
+      setTimeout(() => { btn.disabled = false; btn.innerHTML = originalText; }, 2000);
+    }
+  }
+  </script>
+</body>
+</html>

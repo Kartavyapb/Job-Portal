@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help - Job Portal</title>
+    <!-- Linking external CSS -->
+    <link rel="stylesheet" href="{% static 'css/help.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Job Portal Help Center</h1>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'jobs' %}">Jobs</a>
+            <a href="/contact/">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="question">
+                <h3>1. How do I create an account?</h3>
+                <p>Click on the "Register" button on the top right corner and fill in your details.</p>
+            </div>
+            <div class="question">
+                <h3>2. How do I apply for a job?</h3>
+                <p>Browse jobs under the 'Jobs' section and click 'Apply Now' for the job you want.</p>
+            </div>
+            <div class="question">
+                <h3>3. How can recruiters post a job?</h3>
+                <p>Recruiters need to log in and go to the 'Post a Job' page to submit job details.</p>
+            </div>
+        </section>
+
+        <section class="support">
+            <h2>Need More Help?</h2>
+            <p>If you still have questions, reach out to us:</p>
+            <ul>
+                <li>Email: support@jobportal.com</li>
+                <li>Phone: +91-9112729262</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Job Portal. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

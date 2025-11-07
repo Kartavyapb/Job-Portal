@@ -1,0 +1,535 @@
+<!-- resumeapp/templates/resumeapp/resume_builder.html -->
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Resume Builder</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f7f8fa; font-family: Inter, Arial, sans-serif; padding:30px; }
+    .card { padding:20px; border-radius:12px; }
+    .form-row { gap: 1rem; margin-bottom: 1rem; }
+    .form-section { display:none; }
+    .form-section.active { display:block; }
+    .required::after { content:" *"; color:red; }
+    .mb-big { margin-bottom:1.25rem; }
+    #edu-table td, #edu-table th,
+    #skill-table td, #skill-table th,
+    #proj-table td, #proj-table th,
+    #exp-table td, #exp-table th { vertical-align: middle; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <h3 class="mb-4">Build Your Resume</h3>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- STEP 1: Personal -->
+      <div class="form-section active" id="step-1">
+        <h5>Personal Information</h5>
+        <div class="mb-big">
+          {{ per_form.full_name.label_tag }}<span class="text-danger">*</span>
+          {{ per_form.full_name }}
+        </div>
+        <div class="mb-big">
+          {{ per_form.email.label_tag }}<span class="text-danger">*</span>
+          {{ per_form.email }}
+        </div>
+        <div class="mb-big">
+          {{ per_form.phone.label_tag }}<span class="text-danger">*</span>
+          {{ per_form.phone }}
+        </div>
+        <div class="mb-big">
+          {{ per_form.address.label_tag }}<span class="text-danger">*</span>
+          {{ per_form.address }}
+        </div>
+        <div class="mb-big">
+          {{ per_form.objective.label_tag }}<span class="text-danger">*</span>
+          {{ per_form.objective }}
+        </div>
+        <div class="mb-big">
+          {{ per_form.linkedin.label_tag }}
+          {{ per_form.linkedin }}
+        </div>
+        <div class="mb-big">
+          {{ per_form.github.label_tag }}
+          {{ per_form.github }}
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-primary" onclick="showSection(2)">Next ➡</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Education -->
+      <div class="form-section" id="step-2">
+        <h5>Education <small class="text-muted">(At least one required)</small></h5>
+
+        <!-- Education Form -->
+        <div id="edu-form-container" class="border rounded p-3 bg-light mt-3">
+          <div class="row g-3">
+            <!-- Level -->
+            <div class="col-md-4">
+              <label class="form-label">Education Level <span class="text-danger">*</span></label>
+              <select id="edu-level" class="form-select" required>
+                <option value="">Select Level</option>
+                <option value="10th">10th</option>
+                <option value="12th">12th</option>
+                <option value="Diploma">Diploma</option>
+                <option value="Graduate">Graduate</option>
+                <option value="Post Graduate">Post Graduate</option>
+                <option value="PhD">PhD</option>
+              </select>
+            </div>
+
+            <!-- Board Selection -->
+            <div class="col-md-4 board-wrapper d-none">
+              <label class="form-label">Select Board <span class="text-danger">*</span></label>
+              <select id="edu-board" class="form-select board-select">
+                <option value="">Select Board</option>
+                <option>CBSE</option>
+                <option>ICSE</option>
+                <option>NIOS</option>
+                <option>Maharashtra State Board</option>
+                <option>Gujarat Board</option>
+                <option>Tamil Nadu Board</option>
+                <option>Karnataka Board</option>
+                <option>Kerala Board</option>
+                <option>Uttar Pradesh Board</option>
+                <option>Bihar Board</option>
+                <option>West Bengal Board</option>
+                <option>Rajasthan Board</option>
+                <option>Punjab Board</option>
+                <option>Haryana Board</option>
+                <option>Madhya Pradesh Board</option>
+                <option>Telangana Board</option>
+                <option>Andhra Pradesh Board</option>
+                <option>Odisha Board</option>
+                <option>Assam Board</option>
+                <option>Jharkhand Board</option>
+                <option>Chhattisgarh Board</option>
+                <option>Goa Board</option>
+                <option>Delhi Board</option>
+                <option>Other</option>
+              </select>
+              <input type="text" id="custom-board" class="form-control mt-2 board-other d-none" placeholder="Enter your board name" />
+            </div>
+
+            <!-- Degree/Course -->
+            <div class="col-md-4 degree-wrapper d-none">
+              <label class="form-label">Degree / Course Name <span class="text-danger">*</span></label>
+              <input type="text" id="edu-degree" class="form-control" placeholder="e.g. BCA, M.Sc, Diploma in Civil" />
+            </div>
+
+            <!-- Institute -->
+            <div class="col-md-6">
+              <label class="form-label">Institute / School Name <span class="text-danger">*</span></label>
+              <input type="text" id="edu-institute" class="form-control" placeholder="Enter Institute Name" required />
+            </div>
+
+            <!-- Passing Year -->
+            <div class="col-md-3">
+              <label class="form-label">Passing Year <span class="text-danger">*</span></label>
+              <input type="number" id="edu-year" class="form-control" placeholder="YYYY" min="1980" max="2030" required />
+            </div>
+
+            <!-- Percentage -->
+            <div class="col-md-3">
+              <label class="form-label">Percentage / CGPA <span class="text-danger">*</span></label>
+              <input type="text" id="edu-percentage" class="form-control" placeholder="e.g. 85% or 8.5 CGPA" required />
+            </div>
+          </div>
+
+          <div class="text-end mt-3">
+            <button type="button" class="btn btn-success" onclick="saveEducation()">Save Education</button>
+          </div>
+        </div>
+
+        <!-- Education Table -->
+        <div class="mt-4">
+          <h6 class="fw-bold">Added Education Details</h6>
+          <table class="table table-bordered" id="edu-table">
+            <thead class="table-light">
+              <tr>
+                <th>Level</th>
+                <th>Board / Degree</th>
+                <th>Institute</th>
+                <th>Year</th>
+                <th>Percentage</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="edu-tbody">
+              <tr><td colspan="6" class="text-center text-muted">No education added yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="text-end mt-3">
+          <button type="button" class="btn btn-secondary" onclick="showSection(1)">⬅ Back</button>
+          <button type="button" class="btn btn-primary" onclick="validateEducation()">Next ➡</button>
+        </div>
+      </div>
+
+            <!-- STEP 3: Skills -->
+      <div class="form-section" id="step-3">
+        <h5>Skills</h5>
+        <div id="skill-form" class="border rounded p-3 bg-light mt-3">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Skill Name<span class="text-danger">*</span></label>
+              <input type="text" id="skill-name" class="form-control" placeholder="e.g. Python, SQL">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Proficiency<span class="text-danger">*</span></label>
+              <select id="skill-level" class="form-select">
+                <option value="">Select Level</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+              </select>
+            </div>
+          </div>
+          <div class="text-end mt-3">
+            <button type="button" class="btn btn-success" onclick="saveEntry('skill')">Save Skill</button>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <table class="table table-bordered" id="skill-table">
+            <thead class="table-light"><tr><th>Skill</th><th>Level</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="3" class="text-center text-muted">No skills added yet.</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="text-end mt-3">
+          <button type="button" class="btn btn-secondary" onclick="showSection(2)">⬅ Back</button>
+          <button type="button" class="btn btn-primary" onclick="validateAndNext('skill',4,true)">Next ➡</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Projects -->
+      <div class="form-section" id="step-4">
+        <h5>Projects (Optional)</h5>
+        <div id="proj-form" class="border rounded p-3 bg-light mt-3">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Project Title</label>
+              <input type="text" id="proj-title" class="form-control" placeholder="Project Title">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Technologies</label>
+              <input type="text" id="proj-tech" class="form-control" placeholder="Tech used">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea id="proj-desc" class="form-control" rows="2" placeholder="Short description"></textarea>
+            </div>
+          </div>
+          <div class="text-end mt-3">
+            <button type="button" class="btn btn-success" onclick="saveEntry('proj')">Save Project</button>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <table class="table table-bordered" id="proj-table">
+            <thead class="table-light"><tr><th>Title</th><th>Tech</th><th>Description</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="4" class="text-center text-muted">No projects added yet.</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="text-end mt-3">
+          <button type="button" class="btn btn-secondary" onclick="showSection(3)">⬅ Back</button>
+          <button type="button" class="btn btn-primary" onclick="validateAndNext('proj',5,false)">Next ➡</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Work Experience -->
+      <div class="form-section" id="step-5">
+        <h5>Work Experience (Optional)</h5>
+        <div id="exp-form" class="border rounded p-3 bg-light mt-3">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Company Name</label>
+              <input type="text" id="exp-company" class="form-control" placeholder="Company Name">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Role</label>
+              <input type="text" id="exp-role" class="form-control" placeholder="Your Role">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Duration</label>
+              <input type="text" id="exp-duration" class="form-control" placeholder="e.g. Jan 2023 - May 2024">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea id="exp-desc" class="form-control" rows="2" placeholder="Responsibilities or achievements"></textarea>
+            </div>
+          </div>
+          <div class="text-end mt-3">
+            <button type="button" class="btn btn-success" onclick="saveEntry('exp')">Save Experience</button>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <table class="table table-bordered" id="exp-table">
+            <thead class="table-light"><tr><th>Company</th><th>Role</th><th>Duration</th><th>Description</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="5" class="text-center text-muted">No experience added yet.</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="text-end mt-3">
+          <button type="button" class="btn btn-secondary" onclick="showSection(4)">⬅ Back</button>
+          <a href="{% url 'review_resume' %}" class="btn btn-success ms-2">Review ➜</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<script>
+let eduList = JSON.parse(localStorage.getItem("eduList")) || [];
+
+document.addEventListener("DOMContentLoaded", function () {
+  renderEduTable();
+
+  window.showSection = function (num) {
+    const current = document.querySelector('.form-section.active');
+    document.querySelectorAll('.form-section').forEach((el, i) =>
+      el.classList.toggle('active', (i + 1) === num)
+    );
+    window.scrollTo(0, 0);
+  };
+
+  document.getElementById("edu-level").addEventListener("change", function () {
+    const level = this.value;
+    const boardWrap = document.querySelector(".board-wrapper");
+    const degreeWrap = document.querySelector(".degree-wrapper");
+    if (["10th","12th"].includes(level)) {
+      boardWrap.classList.remove("d-none");
+      degreeWrap.classList.add("d-none");
+    } else if (["Diploma","Graduate","Post Graduate","PhD"].includes(level)) {
+      degreeWrap.classList.remove("d-none");
+      boardWrap.classList.add("d-none");
+    } else {
+      boardWrap.classList.add("d-none");
+      degreeWrap.classList.add("d-none");
+    }
+  });
+
+  document.getElementById("edu-board").addEventListener("change", function () {
+    const other = document.getElementById("custom-board");
+    if (this.value === "Other") other.classList.remove("d-none");
+    else { other.classList.add("d-none"); other.value = ""; }
+  });
+
+  window.saveEducation = function () {
+    const level = document.getElementById("edu-level").value.trim();
+    const board = document.getElementById("edu-board").value.trim();
+    const customBoard = document.getElementById("custom-board").value.trim();
+    const degree = document.getElementById("edu-degree").value.trim();
+    const institute = document.getElementById("edu-institute").value.trim();
+    const year = document.getElementById("edu-year").value.trim();
+    const percentage = document.getElementById("edu-percentage").value.trim();
+
+    if (!level || !institute || !year || !percentage ||
+      (["10th","12th"].includes(level) && !board && !customBoard) ||
+      (["Diploma","Graduate","Post Graduate","PhD"].includes(level) && !degree)) {
+      alert("⚠️ Please fill all required fields before saving.");
+      return;
+    }
+
+    const boardOrDegree = ["10th","12th"].includes(level)
+      ? (board === "Other" ? customBoard : board)
+      : degree;
+
+    const eduData = { level, boardOrDegree, institute, year, percentage };
+    eduList.push(eduData)
+
+    localStorage.setItem("eduList", JSON.stringify(eduList));
+    renderEduTable();
+    clearEduForm();
+  };
+
+
+  window.deleteEducation = function (i) {
+    if (confirm("Are you sure you want to delete this record?")) {
+      eduList.splice(i, 1);
+      localStorage.setItem("eduList", JSON.stringify(eduList));
+      renderEduTable();
+    }
+  };
+
+  window.validateEducation = function () {
+    if (eduList.length === 0) {
+      alert("⚠️ Please add at least one education record before continuing.");
+      return;
+    }
+    showSection(3);
+  };
+});
+
+function renderEduTable() {
+  const tbody = document.getElementById("edu-tbody");
+  tbody.innerHTML = "";
+  eduList.forEach((edu, i) => {
+    tbody.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td>${edu.level}</td>
+        <td>${edu.boardOrDegree}</td>
+        <td>${edu.institute}</td>
+        <td>${edu.year}</td>
+        <td>${edu.percentage}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteEducation(${i})">Delete</button>
+        </td>
+      </tr>
+    `);
+  });
+  if (eduList.length === 0)
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No education added yet.</td></tr>`;
+}
+
+function clearEduForm() {
+  document.getElementById("edu-level").value = "";
+  document.getElementById("edu-board").value = "";
+  document.getElementById("custom-board").value = "";
+  document.getElementById("edu-degree").value = "";
+  document.getElementById("edu-institute").value = "";
+  document.getElementById("edu-year").value = "";
+  document.getElementById("edu-percentage").value = "";
+  document.querySelector(".board-wrapper").classList.add("d-none");
+  document.querySelector(".degree-wrapper").classList.add("d-none");
+  document.getElementById("custom-board").classList.add("d-none");
+}
+
+
+
+let data = { edu: [], skill: [], proj: [], exp: [] };
+let editIndex = { edu:-1, skill:-1, proj:-1, exp:-1 };
+
+function showSection(num){
+  document.querySelectorAll('.form-section').forEach((s,i)=>s.classList.toggle('active',(i+1)===num));
+  window.scrollTo(0,0);
+}
+
+function saveEntry(type){
+  let entry={};
+  if(type==='edu'){
+    const level=val('edu-level'),inst=val('edu-institute'),yr=val('edu-year'),perc=val('edu-percentage');
+    if(!level||!inst||!yr||!perc){alert('Fill all required education fields.');return;}
+    entry={level,inst,yr,perc};
+  }
+  else if(type==='skill'){
+    const name=val('skill-name'),lvl=val('skill-level');
+    if(!name||!lvl){alert('Enter skill name and level.');return;}
+    entry={name,lvl};
+  }
+  else if(type==='proj'){
+    const t=val('proj-title'),tech=val('proj-tech'),d=val('proj-desc');
+    if(!t&&!tech&&!d){alert('Enter at least one project field.');return;}
+    entry={t,tech,d};
+  }
+  else if(type==='exp'){
+    const c=val('exp-company'),r=val('exp-role'),dur=val('exp-duration'),d=val('exp-desc');
+    if(!c&&!r&&!dur&&!d){alert('Enter at least one experience field.');return;}
+    entry={c,r,dur,d};
+  }
+
+  if(editIndex[type]>=0){ data[type][editIndex[type]]=entry; editIndex[type]=-1; }
+  else data[type].push(entry);
+  renderTable(type);
+  clearForm(type);
+}
+
+function renderTable(type){
+  const tbody=document.querySelector(`#${type}-table tbody`);
+  tbody.innerHTML='';
+  if(data[type].length===0){
+    tbody.innerHTML=`<tr><td colspan="${type==='edu'?5:type==='skill'?3:type==='proj'?4:5}" class="text-center text-muted">No ${type} added yet.</td></tr>`;
+    return;
+  }
+  data[type].forEach((e,i)=>{
+    let row='';
+    if(type==='edu') row=`<td>${e.level}</td><td>${e.inst}</td><td>${e.yr}</td><td>${e.perc}</td>`;
+    if(type==='skill') row=`<td>${e.name}</td><td>${e.lvl}</td>`;
+    if(type==='proj') row=`<td>${e.t}</td><td>${e.tech}</td><td>${e.d}</td>`;
+    if(type==='exp') row=`<td>${e.c}</td><td>${e.r}</td><td>${e.dur}</td><td>${e.d}</td>`;
+    tbody.insertAdjacentHTML('beforeend',`<tr>${row}<td><button class='btn btn-sm btn-outline-danger' onclick="del('${type}',${i})">Delete</button></td></tr>`);
+  });
+}
+
+function del(type,i){data[type].splice(i,1);renderTable(type);}
+function val(id){return document.getElementById(id).value.trim();}
+function clearForm(type){document.querySelectorAll(`#${type}-form input,#${type}-form textarea,#${type}-form select`).forEach(e=>e.value='');}
+function validateAndNext(type,next,isRequired){ if(isRequired&&data[type].length===0){alert(`Add at least one ${type} record.`);return;} showSection(next); }
+
+// --- Local Storage Auto Save/Load for Personal Info ---
+document.addEventListener("DOMContentLoaded", function () {
+  const personalFields = [
+    "id_full_name", "id_email", "id_phone", "id_address",
+    "id_objective", "id_linkedin", "id_github"
+  ];
+
+  // Load existing data if available
+  personalFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && localStorage.getItem(id)) el.value = localStorage.getItem(id);
+  });
+
+  // Save on input
+  personalFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", () => localStorage.setItem(id, el.value));
+    }
+  });
+});
+
+
+
+
+// --- Skills / Projects / Experience Lists Persistence ---
+document.addEventListener("DOMContentLoaded", function () {
+  const types = ["skill", "proj", "exp"];
+
+  types.forEach(type => {
+    // Load existing data
+    const saved = localStorage.getItem(`${type}List`);
+    if (saved) data[type] = JSON.parse(saved);
+
+    // Re-render tables
+    renderTable(type);
+  });
+
+  // Overwrite saveEntry to include localStorage update
+  const originalSave = saveEntry;
+  window.saveEntry = function (type) {
+    originalSave(type);
+    localStorage.setItem(`${type}List`, JSON.stringify(data[type]));
+  };
+
+  // Overwrite del to include localStorage update
+  const originalDel = del;
+  window.del = function (type, i) {
+    originalDel(type, i);
+    localStorage.setItem(`${type}List`, JSON.stringify(data[type]));
+  };
+});
+
+
+// Open the correct step if coming from Review Page
+window.addEventListener("load", function () {
+  const params = new URLSearchParams(window.location.search);
+  const step = params.get("step");
+  if (step) showSection(parseInt(step));
+});
+</script>
+</body>
+</html>
