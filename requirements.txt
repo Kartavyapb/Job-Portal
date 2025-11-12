@@ -1,0 +1,29 @@
+# Core framework
+Django==5.0.4
+
+# Dtabase adaptor (for PostgreSQL on Render)
+psycopg2-binary==2.9.9
+
+# For serving static files on Render
+gunicorn==22.0.0
+whitenoise==6.6.0
+
+# For handling environment variables (Render usee this)
+python-dotenv==1.0.1
+
+# Image/Files handling if use ImageField of FileField
+Pillow==10.4.0
+
+# Email handling (if using Gmail SMTP or similar)
+django-allauth==0.63.3
+
+# For Crispy forms or bootstrap forms
+django-crispy-forms==2.1
+crispy-bootstrap4==2022.1
+
+# For better security and CORS if needed
+django-cors-headers==4.3.1
+
+xhtml2pdf==0.2.15
+
+pip freeze > requirements.txt

@@ -1,0 +1,83 @@
+body {
+
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    /* height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+    
+
+}
+
+.container {  
+    text-align: right; 
+    padding: 50px;
+     
+    background-image: url(https://pact-for-skills.ec.europa.eu/sites/default/files/styles/oe_theme_full_width_banner_4_1/public/2022-09/homepage-hero-x2.jpg.webp?itok=ox0Q80V0);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* display: flex; */
+    justify-content: center;
+    /* align-items: center; */
+    color: white;
+    height: 400px;
+    width: 100%;
+    
+    
+}
+
+
+.bottom-section {
+      background-color: rgb(182, 224, 245); /* Your lower background color */
+      min-height: 500px; /* adjust */
+      padding: 60px;
+}
+
+/* Footer Styling */
+.footer {
+    /* background-color: #f8f9fa; */
+    padding: 30px 20px;
+    margin-top: 50px;
+    /* border-top: 2px solid #dee2e6; */
+    text-align: center;
+}
+
+.footer-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 15px;
+    transition: 0.3s ease;
+}
+
+.footer-title:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.footer-jobs {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.footer-jobs li {
+    font-size: 16px;
+    padding: 5px 0;
+    color: #343a40;
+    transition: 0.2s;
+}
+
+.footer-jobs li:hover {
+    color: #28a745;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.footer-text {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #6c757d;
+}
